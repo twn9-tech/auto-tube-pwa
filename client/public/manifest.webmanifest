@@ -1,0 +1,18 @@
+{
+  "id": "./",
+  "name": "Auto-Tube Studio",
+  "short_name": "Auto-Tube",
+  "description": "Studio untuk menyiapkan video YouTube, subtitle, metadata, dan thumbnail.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b1420",
+  "theme_color": "#0b1420",
+  "categories": ["video", "productivity"],
+  "icons": [
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
