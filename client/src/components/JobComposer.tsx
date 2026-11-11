@@ -20,7 +20,7 @@ export default function JobComposer({ saving, onClose, onSave }: JobComposerProp
   const [sourceUrl, setSourceUrl] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [thumbnailText, setThumbnailText] = useState("VIDEO BARU");
+  const [thumbnailText, setThumbnailText] = useState("");
   const [cues, setCues] = useState<SubtitleCue[]>([{ id: 1, start: "00:00", end: "00:03", text: "" }]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
@@ -71,10 +71,6 @@ export default function JobComposer({ saving, onClose, onSave }: JobComposerProp
       if (source.protocol !== "https:" && source.protocol !== "http:") throw new Error("Invalid protocol");
     } catch {
       setFormError("Masukkan URL video yang valid untuk diproses lewat GitHub Actions.");
-      return;
-    }
-    if (!title.trim()) {
-      setFormError("Judul video wajib diisi.");
       return;
     }
     try {
@@ -158,7 +154,7 @@ export default function JobComposer({ saving, onClose, onSave }: JobComposerProp
           <div>
             <div className="eyebrow"><Sparkles size={13} /> STUDIO PRODUKSI</div>
             <h2 id="composer-title">Buat video baru</h2>
-            <p>Siapkan draft, lalu tinjau detailnya sebelum proses unggah.</p>
+            <p>Masukkan URL sumber. Pipeline AI dapat membuat subtitle, metadata, dan thumbnail untuk ditinjau sebelum publikasi.</p>
           </div>
           <button className="icon-button" type="button" aria-label="Tutup" onClick={onClose}><X size={19} /></button>
         </header>
@@ -177,18 +173,18 @@ export default function JobComposer({ saving, onClose, onSave }: JobComposerProp
               </section>
 
               <section className="form-section">
-                <div className="section-heading"><span className="section-index">02</span><div><h3>Judul &amp; description</h3><p>Metadata draft tersimpan pada antrean Supabase.</p></div></div>
+                <div className="section-heading"><span className="section-index">02</span><div><h3>Judul &amp; description</h3><p>Opsional. Kosongkan agar Gemini membuat metadata saat workflow dijalankan.</p></div></div>
                 <label className="field-label" htmlFor="video-title">Judul YouTube</label>
-                <input id="video-title" className="input" maxLength={100} placeholder="Tulis judul yang jelas dan menarik" value={title} onChange={(event) => setTitle(event.target.value)} required />
+                <input id="video-title" className="input" maxLength={100} placeholder="Kosongkan untuk dibuat otomatis" value={title} onChange={(event) => setTitle(event.target.value)} />
                 <label className="field-label" htmlFor="video-description">Description</label>
-                <textarea id="video-description" className="input textarea" rows={4} maxLength={5000} placeholder="Ringkasan video, tautan, atau informasi tambahan" value={description} onChange={(event) => setDescription(event.target.value)} />
+                <textarea id="video-description" className="input textarea" rows={4} maxLength={5000} placeholder="Opsional — kosongkan untuk dibuat otomatis" value={description} onChange={(event) => setDescription(event.target.value)} />
                 <div className="character-count">{description.length} / 5000</div>
               </section>
             </div>
 
             <div className="composer-column">
               <section className="form-section">
-                <div className="section-heading"><span className="section-index">03</span><div><h3>Subtitle teks</h3><p>Atur waktu dan isi setiap cue subtitle.</p></div></div>
+                <div className="section-heading"><span className="section-index">03</span><div><h3>Subtitle teks</h3><p>Opsional. Jika kosong, pipeline membuat subtitle otomatis dari audio video.</p></div></div>
                 <div className="cue-list">
                   {cues.map((cue, index) => (
                     <div className="cue-row" key={cue.id}>
@@ -205,11 +201,11 @@ export default function JobComposer({ saving, onClose, onSave }: JobComposerProp
                   ))}
                 </div>
                 <button className="text-button" type="button" onClick={addCue}><Plus size={15} /> Tambah baris subtitle</button>
-                <div className="subtitle-export"><FileText size={15} /><span>{subtitleSrt ? `${subtitleSrt.split("\n\n").length} cue siap disimpan sebagai SRT` : "Cue akan disimpan bersama draft"}</span></div>
+                <div className="subtitle-export"><FileText size={15} /><span>{subtitleSrt ? `${subtitleSrt.split("\n\n").length} cue siap disimpan sebagai SRT` : "Kosongkan agar subtitle dibuat otomatis oleh pipeline"}</span></div>
               </section>
 
               <section className="form-section thumbnail-section">
-                <div className="section-heading"><span className="section-index">04</span><div><h3>Thumbnail</h3><p>Pilih gambar dan buat file PNG lokal.</p></div></div>
+                <div className="section-heading"><span className="section-index">04</span><div><h3>Thumbnail</h3><p>Pipeline membuat thumbnail otomatis; pilihan di sini hanya pratinjau lokal.</p></div></div>
                 <div className={`thumbnail-preview ${thumbnailUrl ? "has-image" : ""}`} style={thumbnailUrl ? { backgroundImage: `linear-gradient(0deg, rgba(4,12,20,.86), transparent 72%), url(${thumbnailUrl})` } : undefined}>
                   {!thumbnailUrl && <span className="preview-glow" />}
                   <span className="thumbnail-kicker"><Image size={13} /> AUTO-TUBE STUDIO</span>
@@ -222,14 +218,14 @@ export default function JobComposer({ saving, onClose, onSave }: JobComposerProp
                 </div>
                 <label className="field-label" htmlFor="thumbnail-text">Teks thumbnail</label>
                 <input id="thumbnail-text" className="input" maxLength={60} value={thumbnailText} onChange={(event) => setThumbnailText(event.target.value)} placeholder="Teks besar pada thumbnail" />
-                <p className="field-note">PNG dibuat di perangkat ini. Unggah thumbnail ke YouTube belum tersambung.</p>
+                <p className="field-note">PNG ini hanya dibuat di perangkat. Workflow menghasilkan thumbnail untuk video; file lokal tidak diunggah.</p>
               </section>
             </div>
           </div>
 
           {formError && <div className="form-error" role="alert">{formError}</div>}
           <footer className="composer-footer">
-            <span className="approval-note"><ShieldCheck size={15} /> Belum ada video yang diunggah. Ini hanya menyimpan draft.</span>
+            <span className="approval-note"><ShieldCheck size={15} /> Simpan draft saja. Pilih PREVIEW_ONLY di Actions untuk meninjau; PUBLISH hanya setelah disetujui.</span>
             <div className="composer-footer-actions">
               <button className="button button-quiet" type="button" onClick={onClose}>Batal</button>
               <button className="button button-primary" type="submit" disabled={saving}>{saving ? "Menyimpan…" : "Simpan draft"}<span aria-hidden="true">→</span></button>

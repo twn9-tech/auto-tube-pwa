@@ -138,7 +138,7 @@ export default function Home() {
     setJobs((current) => [data as UploadJob, ...current]);
     setComposerOpen(false);
     setSection("queue");
-    setNotice("Draft tersimpan di Supabase. Untuk memprosesnya, buka workflow GitHub Actions dan isi konfirmasi publikasi di sana.");
+    setNotice("Draft tersimpan di Supabase. Buka workflow GitHub Actions dan masukkan URL sumber. PREVIEW_ONLY membuat hasil AI tanpa mengunggah; pilih PUBLISH hanya setelah meninjau dan menyetujui hasil.");
     setNoticeKind("info");
   };
 
@@ -270,9 +270,9 @@ export default function Home() {
 
           {section === "queue" && (
             <section className="queue-page">
-              <div className="queue-heading"><div><div className="eyebrow">WORKSPACE VIDEO</div><h2>Draft dan status publikasi.</h2><p>Draft disimpan pada Supabase. Pemrosesan YouTube tetap melalui workflow GitHub Actions.</p></div><button className="button button-primary" type="button" onClick={() => setComposerOpen(true)}><Plus size={16} /> Buat video</button></div>
+              <div className="queue-heading"><div><div className="eyebrow">WORKSPACE VIDEO</div><h2>Draft dan status publikasi.</h2><p>Draft disimpan pada Supabase. Jalankan PREVIEW_ONLY di GitHub Actions untuk membuat subtitle, metadata, dan thumbnail; publikasi memerlukan pilihan PUBLISH.</p></div><button className="button button-primary" type="button" onClick={() => setComposerOpen(true)}><Plus size={16} /> Buat video</button></div>
               <JobList jobs={jobs} loading={jobsLoading} onCreate={() => setComposerOpen(true)} large />
-              <div className="workflow-callout"><div className="callout-icon"><ShieldCheck size={18} /></div><div><strong>Publikasi tidak berjalan otomatis dari halaman ini</strong><p>Setelah memeriksa draft, buka workflow privat GitHub Actions dan ketik konfirmasi hak penggunaan serta <code>PUBLISH</code>.</p></div><a className="button button-secondary" href={ACTIONS_URL} target="_blank" rel="noreferrer">Buka Actions <ArrowUpRight size={14} /></a></div>
+              <div className="workflow-callout"><div className="callout-icon"><ShieldCheck size={18} /></div><div><strong>Mulai dari pratinjau; unggah tetap manual</strong><p>Di workflow privat GitHub Actions, konfirmasi hak penggunaan lalu pilih <code>PREVIEW_ONLY</code>. Tinjau artefak hasil AI; pilih <code>PUBLISH</code> hanya jika Anda menyetujuinya.</p></div><a className="button button-secondary" href={ACTIONS_URL} target="_blank" rel="noreferrer">Buka Actions <ArrowUpRight size={14} /></a></div>
             </section>
           )}
 
@@ -281,7 +281,7 @@ export default function Home() {
               <div className="queue-heading"><div><div className="eyebrow">KONEKSI LAYANAN</div><h2>Integrasi Auto-Tube.</h2><p>Rahasia dipisahkan dari situs publik. Yang dibutuhkan browser hanya Supabase publishable key.</p></div></div>
               <div className="integration-grid">
                 <article className="integration-card"><span className="integration-icon supa-icon"><Cloud size={20} /></span><div className="integration-state"><span className="connection-dot" /> TERHUBUNG</div><h3>Supabase</h3><p>Login dan antrean membaca data sesuai kebijakan RLS pengguna.</p><span className="integration-detail">Project: nzsqrcnvahlxvxcbdibj</span></article>
-                <article className="integration-card"><span className="integration-icon google-icon">G</span><div className="integration-state pending"><Clock3 size={13} /> PERLU CEK</div><h3>Google Login</h3><p>Provider Google Supabase harus aktif dan alamat halaman Pages harus ada di daftar redirect yang diizinkan.</p><span className="integration-detail">Redirect: {new URL(import.meta.env.BASE_URL, window.location.origin).toString()}</span></article>
+                <article className="integration-card"><span className="integration-icon google-icon">G</span><div className="integration-state pending"><Clock3 size={13} /> AKTIF · MODE TEST</div><h3>Google Login</h3><p>Login Google sudah aktif melalui Supabase Auth. Saat ini hanya akun yang terdaftar sebagai tester yang dapat masuk.</p><span className="integration-detail">Redirect: {new URL(import.meta.env.BASE_URL, window.location.origin).toString()}</span></article>
                 <article className="integration-card"><span className="integration-icon youtube-icon"><Youtube size={20} /></span><div className="integration-state pending"><Clock3 size={13} /> TOKEN TERPISAH</div><h3>YouTube &amp; Actions</h3><p>Unggah menggunakan workflow manual. Token kanal tetap di GitHub Actions Secrets, tidak dikirim ke PWA.</p><a className="integration-link" href={ACTIONS_URL} target="_blank" rel="noreferrer">Buka workflow YouTube <ArrowUpRight size={14} /></a></article>
                 <article className="integration-card"><span className="integration-icon safe-icon"><ShieldCheck size={20} /></span><div className="integration-state"><span className="connection-dot" /> PUBLIK AMAN</div><h3>GitHub Pages</h3><p>Halaman hanya berisi antarmuka statis. Backend Python dan credential tidak dipaketkan ke browser.</p><span className="integration-detail">Situs Pages akan dipublikasi dari repo PWA terpisah.</span></article>
               </div>
